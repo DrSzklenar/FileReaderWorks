@@ -25,8 +25,6 @@ namespace FileReader
         public static XElement items;
         public static XElement itemsnew;
 
-
-
         public Listing(string fromFileName, string toFileName)
         {
             InitializeComponent();
@@ -37,34 +35,47 @@ namespace FileReader
             FillLbLanguage();
 
             DoEverything();
-
-
         }
-
 
         private void DoEverything()
         {
-
             items = XElement.Load((@"items.xml"));
             itemsnew = items;
-
+            int ii = 0;
             foreach (var row in items.Descendants())
             {
-                for (int i = 0; i < adatok.Count; i++)
+                
+                if (!Convert.ToString(row).Contains("name=") && !Convert.ToString(row).Contains("desctiption="))
                 {
-                    if (row.Attribute("name").Value == adatok.ElementAt(i).Key)
+
+                }
+                else
+                {
+                    if (row.Attribute("name").Value == adatok.ElementAt(ii).Key && row.Attribute("description").Value == adatok.ElementAt(ii + 1).Key)
                     {
-                        row.Attribute("name").Value = adatok.ElementAt(i).Value;
+                        row.Attribute("name").Value = adatok.ElementAt(ii).Value;
+                        row.Attribute("description").Value = adatok.ElementAt(ii + 1).Value;
                     }
-                    if (row.Attribute("description") != null)
+                    else
                     {
-                        if (row.Attribute("description").Value == adatok.ElementAt(i).Key)
+                        for (int i = 0; i < adatok.Count; i++)
                         {
-                            row.Attribute("description").Value = adatok.ElementAt(i).Value;
+                            if (row.Attribute("name").Value == adatok.ElementAt(i).Key)
+                            {
+                                row.Attribute("name").Value = adatok.ElementAt(i).Value;
+                            }
+                            if (row.Attribute("description") != null)
+                            {
+                                if (row.Attribute("description").Value == adatok.ElementAt(i).Key)
+                                {
+                                    row.Attribute("description").Value = adatok.ElementAt(i).Value;
+                                }
+                            }
                         }
                     }
-                }
+                    ii++;
                 lbItems.Items.Add(row);
+                }
             }
         }
 
@@ -86,14 +97,11 @@ namespace FileReader
                     {
                         break;
                     }
-                    //lbMinden.Items.Add(temp);
-
                     for (int i = 0; i < 8; i++)
                     {
                         sr.ReadLine();
                     }
                     temp2 = sr.ReadLine();
-                    //lbMinden.Items.Add(temp);
                     temp = temp.Remove(0, 15);
                     temp = temp.Replace("\">", "");
                     temp2 = temp2.Remove(0, 14);
